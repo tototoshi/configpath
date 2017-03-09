@@ -30,16 +30,6 @@ class compile extends StaticAnnotation {
       }
     }
 
-    val configTrait = Seq(
-      q"""
-         abstract class ConfigTree(val name: String, val full: String)
-        """
-    )
-
-    def defConfigTree(name: String, path: String, fullPath: String): Defn.Object = {
-      q"object ${Term.Name(s"`$name`")} extends ConfigTree(${Lit(path)}, ${Lit(fullPath)})"
-    }
-
     def addStatsToTempl(templ: Template, prepend: Seq[Stat], append: Seq[Stat]): Template = {
       val stats = templ.stats.getOrElse(Seq.empty[Stat])
       val newStats = prepend ++ stats ++ append
@@ -51,14 +41,22 @@ class compile extends StaticAnnotation {
       imp.withTemplate(obj, templ => addStatsToTempl(templ = templ, prepend, append))
     }
 
+    val configTree = Seq(
+      q"""
+         abstract class ConfigTree(val name: String, val full: String)
+        """
+    )
+
+    def defConfigTree(name: String, path: String, fullPath: String): Defn.Object = {
+      q"object ${Term.Name(s"`$name`")} extends ConfigTree(${Lit(path)}, ${Lit(fullPath)})"
+    }
+
     val configFile = this match {
       case q"new $_(${Lit(path)})" => new File(path.toString)
       case _ => abort("config file is not specified")
     }
 
     val config = ConfigFactory.parseFile(configFile).resolve()
-
-    val rootConfig: ConfigObject = config.root()
 
     def go[T: HasTemplate](obj: T, config: ConfigValue, path: List[String]): T = {
       config.valueType() match {
@@ -81,9 +79,9 @@ class compile extends StaticAnnotation {
 
     val annotated = defn match {
       case obj: Defn.Object=>
-        addStats(go(obj, rootConfig, path = Nil), configTrait, Seq.empty[Stat])
+        addStats(go(obj, config.root, path = Nil), configTree, Seq.empty[Stat])
       case cls: Defn.Class =>
-        addStats(go(cls, rootConfig, path = Nil), configTrait, Seq.empty[Stat])
+        addStats(go(cls, config.root, path = Nil), configTree, Seq.empty[Stat])
       case _ =>
         abort("@compile must annotate object or class")
     }
