@@ -32,9 +32,6 @@ class compile extends StaticAnnotation {
 
     val configTrait = Seq(
       q"""
-          import com.typesafe.config._
-        """,
-      q"""
          abstract class ConfigTree(val name: String, val full: String)
         """
     )
