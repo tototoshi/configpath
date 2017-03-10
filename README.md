@@ -6,10 +6,12 @@
 ## Install
 
 ```scala
-resolvers += 
+resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-  
-libraryDependencies += "com.github.tototoshi" %% "configpath" % "0.1.0-SNAPSHOT"  
+
+libraryDependencies += "com.github.tototoshi" %% "configpath" % "0.1.0-SNAPSHOT"
+
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M7" cross CrossVersion.full)
 ```
 
 
