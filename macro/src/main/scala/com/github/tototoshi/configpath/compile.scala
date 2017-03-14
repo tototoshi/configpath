@@ -41,13 +41,13 @@ class compile extends StaticAnnotation {
 
     val config = ConfigFactory.parseFile(configFile).resolve()
 
-    def go[T: HasTemplate](obj: T, config: ConfigValue, path: List[String]): T = {
+    def constructConfigTree[T: HasTemplate](obj: T, config: ConfigValue, path: List[String]): T = {
       config.valueType() match {
         case ConfigValueType.OBJECT =>
           val configObject = config.asInstanceOf[ConfigObject]
           val children = configObject.asScala.toMap.map { case (key, value) =>
             val child = defConfigTree(key, key, (path :+ key).mkString("."))
-            go(child, value, path :+ key)
+            constructConfigTree(child, value, path :+ key)
           }.to[Seq]
           addStats(obj, Seq.empty[Stat], children)
         case ConfigValueType.LIST |
@@ -61,9 +61,9 @@ class compile extends StaticAnnotation {
 
     val annotated = defn match {
       case obj: Defn.Object=>
-        addStats(go(obj, config.root, path = Nil), configTree, Seq.empty[Stat])
+        addStats(constructConfigTree(obj, config.root, path = Nil), configTree, Seq.empty[Stat])
       case cls: Defn.Class =>
-        addStats(go(cls, config.root, path = Nil), configTree, Seq.empty[Stat])
+        addStats(constructConfigTree(cls, config.root, path = Nil), configTree, Seq.empty[Stat])
       case _ =>
         abort("@compile must annotate object or class")
     }
