@@ -64,6 +64,8 @@ class compile extends StaticAnnotation {
         addStats(constructConfigTree(obj, config.root, path = Nil), configTree, Seq.empty[Stat])
       case cls: Defn.Class =>
         addStats(constructConfigTree(cls, config.root, path = Nil), configTree, Seq.empty[Stat])
+      case Term.Block(Seq(cls: Defn.Class, obj: Defn.Object)) =>
+        Term.Block(Seq(addStats(constructConfigTree(cls, config.root, path = Nil), configTree, Seq.empty[Stat]), obj))
       case _ =>
         abort("@compile must annotate object or class")
     }

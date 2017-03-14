@@ -22,4 +22,13 @@ class CompileTest extends FunSuite {
     assert(path.akka.actor.serializers.`akka-containers`.name === "akka-containers")
   }
 
+  test("@compile can annotate a case class with companion object") {
+    @compile("macro/src/test/resources/application.conf")
+    case class path()
+    object path
+
+    assert(path().akka.actor.serializers.`akka-containers`.full === "akka.actor.serializers.akka-containers")
+    assert(path().akka.actor.serializers.`akka-containers`.name === "akka-containers")
+  }
+
 }
