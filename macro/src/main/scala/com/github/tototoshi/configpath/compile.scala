@@ -45,7 +45,6 @@ class compile extends StaticAnnotation {
       config.valueType() match {
         case ConfigValueType.OBJECT =>
           val configObject = config.asInstanceOf[ConfigObject]
-          configObject.keySet()
           val children = configObject.asScala.toMap.map { case (key, value) =>
             val child = defConfigTree(key, key, (path :+ key).mkString("."))
             go(child, value, path :+ key)
