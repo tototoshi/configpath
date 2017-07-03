@@ -6,12 +6,14 @@
 ## Install
 
 ```scala
+scalaVersion := "2.12.2"
+
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies += "com.github.tototoshi" %% "configpath" % "0.1.0-SNAPSHOT"
 
-addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M7" cross CrossVersion.full)
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
 ```
 
 
