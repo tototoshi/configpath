@@ -31,7 +31,7 @@ class compile extends StaticAnnotation {
     )
 
     def defConfigTree(name: String, path: String, fullPath: String): Defn.Object = {
-      q"object ${Term.Name(s"`$name`")} extends ConfigTree(${Lit(path)}, ${Lit(fullPath)})"
+      q"object ${Term.Name(s"`$name`")} extends ConfigTree(${Lit.String(path)}, ${Lit.String(fullPath)})"
     }
 
     val configFile = this match {
